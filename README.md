@@ -7,10 +7,11 @@ Welcome to the official repository for the classic word guessing game, Hangman. 
 ## Screenshots
 
 Screenshot-1
-![](https://raw.githubusercontent.com/arshitkataria2/Hangman-Game-Project/main/Screenshots/1.png)
+![](Screenshots/1.png)
 
 Screenshot-2
-![](https://raw.githubusercontent.com/arshitkataria2/Hangman-Game-Project/main/Screenshots/2.png)
+![](Screenshots/2.png)
+
 # About the Game
 
 In Hangman, players attempt to guess a hidden word by suggesting letters within a certain number of guesses. Each correct guess reveals the letter positions in the word, while incorrect guesses bring the player one step closer to being 'hanged'. The game ends when the player successfully guesses the word or runs out of attempts.
