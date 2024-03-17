@@ -43,12 +43,11 @@ Or you can use replit and upload all the files there and run the code. Replit ha
 Product Manager: [Arshdeep Singh](https://github.com/arshdeep4450) (2310991792)
 
 Developer And Tester: [Arshit Kataria](https://github.com/arshitkataria2) (2310991793)
+
 # Acknowledgements
 
 Special thanks to [Dr. Vibhu Sharma](https://github.com/Vibs-11) for guiding us through this project and also deepened our understanding of Source Code Management
 
-
-
-## Thank You 😊
+# Thank You 😊
 
 Thank you for visiting our repository. Dive in and enjoy the game!
