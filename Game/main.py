@@ -15,8 +15,13 @@ mode = "game"
 
 credits_btn_pos = (680, 450)
 credits_btn_size = (80, 30)
-back_btn_pos = (350, 400)
+back_btn_pos = (690, 450)
 back_btn_size = (100, 50)
+reset_btn_pos = (20, 450) 
+reset_btn_size = (100, 30)
+instructions_btn_pos = (315, 450)
+instructions_btn_size = (100, 50)
+
 
 RADIUS = 20
 GAP = 15
@@ -94,6 +99,7 @@ BLACK = (0,0,0)
 def draw():
     win.fill(WHITE)
     if mode == "game":
+       
         text = TITLE_FONT.render("Hangman Game", 1, BLACK)
         win.blit(text, (WIDTH / 2 - text.get_width() / 2, 20))
 
@@ -104,8 +110,12 @@ def draw():
             else:
                 display_word += "_ "
         text = WORD_FONT.render(display_word, 1, BLACK)
-        centered_x_position = WIDTH / 2 - text.get_width() / 2
-        win.blit(text, (centered_x_position, 200))
+        win.blit(text, (WIDTH / 2 - text.get_width() / 2, 200))
+
+        reset_text = LETTER_FONT.render("Reset", 1, BLACK)
+        win.blit(reset_text, reset_btn_pos)
+        instructions_text = LETTER_FONT.render("Instructions", 1, BLACK)
+        win.blit(instructions_text, instructions_btn_pos)
 
         for letter in letters:
             x, y, ltr, visible = letter
@@ -115,16 +125,31 @@ def draw():
                 win.blit(text, (x - text.get_width() / 2, y - text.get_height() / 2))
 
         credits_text = LETTER_FONT.render("Credits", 1, BLACK)
-        win.blit(credits_text, (credits_btn_pos[0], credits_btn_pos[1]))
+        win.blit(credits_text, credits_btn_pos)
 
     elif mode == "credits":
         back_text = LETTER_FONT.render("Back", 1, BLACK)
-        win.blit(back_text, (back_btn_pos[0], back_btn_pos[1]))
+        win.blit(back_text, back_btn_pos)
 
         credits_info = ["Developer and Tester: Arshit Kataria", "Product Manager: Arshdeep Singh"]
         for i, info in enumerate(credits_info):
             text = LETTER_FONT.render(info, 1, BLACK)
             win.blit(text, (100, 100 + i * 60))
+
+    elif mode == "instructions":
+        instructions = [
+            "Welcome to the Hangman Game!",
+            "Guess the word by clicking on the letters",
+            "or typing them on your keyboard.",
+            "Click 'Reset' to start over at any time.",
+            "Press 'Back' to return to the game."
+                       ]
+        for i, line in enumerate(instructions):
+            text = LETTER_FONT.render(line, 1, BLACK)
+            win.blit(text, (20, 20 + i * 60))
+        
+        back_text = LETTER_FONT.render("Back", 1, BLACK)
+        win.blit(back_text, back_btn_pos)      
 
     pygame.display.update()
     
@@ -135,6 +160,7 @@ def display_message(message):
     win.blit(text, (WIDTH/2 - text.get_width()/2, HEIGHT/2 - text.get_height()/2))
     pygame.display.update()
     pygame.time.delay(3000)
+
 
 def main():
     global mode, hangman_status, is_animating
@@ -147,15 +173,24 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-            
+
             if event.type == pygame.MOUSEBUTTONDOWN and not is_animating:
                 m_x, m_y = pygame.mouse.get_pos()
-                if mode == "game" and credits_btn_pos[0] <= m_x <= credits_btn_pos[0] + credits_btn_size[0] and credits_btn_pos[1] <= m_y <= credits_btn_pos[1] + credits_btn_size[1]:
-                    mode = "credits"
-                elif mode == "credits" and back_btn_pos[0] <= m_x <= back_btn_pos[0] + back_btn_size[0] and back_btn_pos[1] <= m_y <= back_btn_pos[1] + back_btn_size[1]:
-                    mode = "game"
-                else:
-                    if mode == "game":
+
+      
+                if mode == "instructions":
+                    if back_btn_pos[0] <= m_x <= back_btn_pos[0] + back_btn_size[0] and back_btn_pos[1] <= m_y <= back_btn_pos[1] + back_btn_size[1]:
+                        mode = "game"
+                        continue 
+
+                elif mode == "game":
+                    if instructions_btn_pos[0] <= m_x <= instructions_btn_pos[0] + instructions_btn_size[0] and instructions_btn_pos[1] <= m_y <= instructions_btn_pos[1] + instructions_btn_size[1]:
+                        mode = "instructions"
+                    elif credits_btn_pos[0] <= m_x <= credits_btn_pos[0] + credits_btn_size[0] and credits_btn_pos[1] <= m_y <= credits_btn_pos[1] + credits_btn_size[1]:
+                        mode = "credits"
+                    elif reset_btn_pos[0] <= m_x <= reset_btn_pos[0] + reset_btn_size[0] and reset_btn_pos[1] <= m_y <= reset_btn_pos[1] + reset_btn_size[1]:
+                        reset_game()
+                    else:
                         for letter in letters:
                             x, y, ltr, visible = letter
                             if visible:
@@ -168,15 +203,21 @@ def main():
                                         if hangman_status < 6:
                                             animate_wrong_guess()
 
+                elif mode == "credits":
+                    if back_btn_pos[0] <= m_x <= back_btn_pos[0] + back_btn_size[0] and back_btn_pos[1] <= m_y <= back_btn_pos[1] + back_btn_size[1]:
+                        mode = "game"
             if event.type == pygame.KEYDOWN and mode == "game":
-                if 'a' <= event.unicode <= 'z':  
-                    ltr = event.unicode.upper()  
+                if 'a' <= event.unicode <= 'z':
+                    ltr = event.unicode.upper()
                     if ltr not in guessed:
                         guessed.append(ltr)
                         if ltr not in word:
                             hangman_status += 1
                             if hangman_status < 6:
                                 animate_wrong_guess()
+                        for letter in letters:
+                            if letter[2] == ltr:
+                                letter[3] = False
 
         if not is_animating and mode == "game":
             draw()
@@ -187,17 +228,18 @@ def main():
             if won:
                 animate_win()
                 display_message("You WON!")
-                pygame.time.delay(1000)  
+                pygame.time.delay(1000)
                 reset_game()
 
             if hangman_status == 6:
-                animate_wrong_guess()  
+                animate_wrong_guess()
                 display_message("You LOST!")
-                pygame.time.delay(1000)  
+                pygame.time.delay(1000)
                 reset_game()
         else:
             draw()
 
+
 while True:
- main()
- pygame.quit()
+ main() 
+pygame.quit()
